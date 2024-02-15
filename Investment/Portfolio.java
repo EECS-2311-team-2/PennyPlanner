@@ -1,6 +1,6 @@
-package application;
-
 import javafx.application.Application;
+import java.util.ArrayList;
+
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
@@ -15,17 +15,36 @@ import javafx.stage.Stage;
 
 public class Portfolio extends Application {
 
-    @Override
+		
+	@Override
     public void start(Stage primaryStage) {
-        // Budget Text
-        Text budgetText = new Text("Budget: $10000");
-        // Investment Text
-        Text investmentText = new Text("Investment: $5000");
+		Database database = new Database();
+
+		ArrayList<Object> added = new ArrayList<Object>();
+		 
+		added.add(1);added.add("john");added.add("pass2");
+	 
+		 ArrayList<Object> Expenses = new ArrayList<Object>();
+		 Expenses.add(1.1);Expenses.add(2.1);added.add(Expenses);
+		 
+		 ArrayList<Object> Incomes = new ArrayList<Object>();
+		 Incomes.add(3.1);Incomes.add(4.1);added.add(Incomes);
+		 
+		 ArrayList<Object> Investments = new ArrayList<Object>();
+		 Investments.add(100.1);Investments.add(200.1);added.add(Investments);
+		 
+		 
+		 database.addPerson(added);
+		 
+        // Budget Text, DATABASE IMPLEMENTED
+        Text budgetText = new Text("Budget:"+(database.sumSubject(0, 3)-database.sumSubject(0, 4)));
+        
+        // Investment Text DATABASE IMPLEMENTED
+        Text investmentText = new Text("Investment:"+database.sumSubject(0, 5));
         
         // Button to navigate to another page
         Button nextPageButton = new Button("Go to Another Page");
         nextPageButton.setOnAction(e -> {
-            // Code to navigate to another page
             System.out.println("Navigating to another page...");
         });
 
@@ -72,12 +91,10 @@ public class Portfolio extends Application {
         barSeries.getData().add(new XYChart.Data<>("Stock C", 400));
         barChart.getData().add(barSeries);
 
-        // Create a VBox layout to hold all components
         VBox root = new VBox(10, budgetText, investmentText, nextPageButton, lineChart, barChart);
         root.setPadding(new javafx.geometry.Insets(20));
 
-        // Set the scene
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 800, 800);
 
         primaryStage.setTitle("Portfolio Page");
         primaryStage.setScene(scene);
