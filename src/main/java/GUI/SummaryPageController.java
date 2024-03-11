@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
+import javafx.scene.chart.Axis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
@@ -42,25 +43,12 @@ public class SummaryPageController implements Initializable{
 		this.timePeriod = tp;
 		initialize(null, null);
 		setupData();
+
+		LineGraph.getXAxis().setTickLabelsVisible(false);
+		LineGraph.getXAxis().setTickLabelRotation(45);
 	}
 
 	private void setupData(){
-//		TimePeriod timePeriod1 = App.s().createNamedQuery("findTimePeriod", TimePeriod.class)
-//			.setParameter("month", 1) // replace this with the current month
-//			.setParameter("year", 2024) // replace this with the current year
-//			.setParameter("uid", App.getCurrentUser().getID()).getSingleResultOrNull();
-//
-//		// get list of expenses for time period
-//		List<ExpenseInstance> results = App.s().createNamedQuery("getExpensesForTimePeriod", ExpenseInstance.class)
-//			.setParameter("month", timePeriod1.getID())
-//			.setParameter("user", App.getCurrentUser().getID())
-//			.getResultList();
-//
-//		// get list of incomes for time period
-//		List<IncomeInstance> incomeResults = App.s().createNamedQuery("getIncomesForTimePeriod", IncomeInstance.class)
-//			.setParameter("month", timePeriod1.getID())
-//			.setParameter("user", App.getCurrentUser().getID()).getResultList();
-
 		List<Category> categories;
 		List<TreeItem<ExpenseTreeTableItem>> items = new ArrayList<>();
 
@@ -84,7 +72,7 @@ public class SummaryPageController implements Initializable{
 			}
 			if (categoryTotal != 0){
 				addPointToLineChart(name, categoryTotal, "E");
-				addDataToPieChart(name, categoryTotal, "E");
+				addDataToPieChart(name + " : -$" + categoryTotal, categoryTotal, "E");
 			}
 
 		}
@@ -97,27 +85,13 @@ public class SummaryPageController implements Initializable{
 			if (i.getAmount() != 0){
 				String name = i.getIncomeSource().getName();
 				addPointToLineChart(name, i.getAmount(), "I");
-				addDataToPieChart(name, i.getAmount(), "I");
+				addDataToPieChart(name + " : +$" + i.getAmount(), i.getAmount(), "I");
 			}
 		}
 	}
 
-	public void setup(URL url, ResourceBundle bundle) {
-		//LineGraph
-		expenses = new XYChart.Series<>();
-		expenses.setName("Expenses");
-		LineGraph.getData().clear();
-		LineGraph.getData().add(expenses);
-
-		income = new XYChart.Series<>();
-		income.setName("Income");
-		LineGraph.getData().add(income);
-
-		LineGraph.setLegendVisible(false);
-		PieChart.setLegendVisible(false);
-	}
-
 	public void addPointToLineChart(String xValue, Number yValue, String type) {
+
 		if (type.equals("E")){
 			XYChart.Series<String, Number> expensesSeries = (XYChart.Series<String, Number>) LineGraph.getData().get(0);
 			expensesSeries.getData().add(new XYChart.Data<>(xValue, yValue));
@@ -126,7 +100,7 @@ public class SummaryPageController implements Initializable{
 			expensesSeries.getNode().setStyle("-fx-stroke: transparent;");
 			newDataPoint.getNode().setStyle("-fx-background-color: red;");
 
-			Tooltip tooltip = new Tooltip(xValue + ", : -$" + yValue);
+			Tooltip tooltip = new Tooltip(xValue + " : -$" + yValue);
 			Tooltip.install(newDataPoint.getNode(), tooltip);
 
 			//expensesSeries.getNode().setStyle("-fx-stroke: red;");
@@ -137,7 +111,7 @@ public class SummaryPageController implements Initializable{
 			XYChart.Data<String, Number> newDataPoint = incomeSeries.getData().get(incomeSeries.getData().size() - 1);
 			newDataPoint.getNode().setStyle("-fx-background-color: green;");
 
-			Tooltip tooltip = new Tooltip(xValue + ", : +$" + yValue);
+			Tooltip tooltip = new Tooltip(xValue + " : +$" + yValue);
 			Tooltip.install(newDataPoint.getNode(), tooltip);
 			//incomeSeries.getNode().setStyle("-fx-stroke: green;");
 		}
@@ -226,6 +200,8 @@ public class SummaryPageController implements Initializable{
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
 		//LineGraph
+		LineGraph.getData().clear();
+
 		expenses = new XYChart.Series<>();
 		expenses.setName("Expenses");
 		LineGraph.getData().clear();
@@ -270,6 +246,7 @@ public class SummaryPageController implements Initializable{
 
 
 		LineGraph.setLegendVisible(false);
-		PieChart.setLegendVisible(false);
+		PieChart.setLegendVisible(true);
+		PieChart.setLabelLineLength(10);
 	}
 }
