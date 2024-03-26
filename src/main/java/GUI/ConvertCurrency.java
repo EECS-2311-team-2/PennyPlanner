@@ -13,7 +13,10 @@ import javafx.scene.control.TextField;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.*;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ResourceBundle;
@@ -128,6 +131,32 @@ public class ConvertCurrency implements Initializable {
 			return false;
 		}
 		return true;
+	}
+public void Database() {
+	String dbName = "convert";
+	String dbUser = "nabeelaansari";
+	String userPassword = "postgres";
+	String url = "jdbc:postgresql://localhost:5432/convert";
+}
+	public void insertConversionRecord(String sourceCurrency, String targetCurrency, double sourceAmount, double convertedAmount) {
+		String sql = "INSERT INTO currency_conversions (source_currency, target_currency, source_amount, converted_amount, conversion_date) VALUES (?, ?, ?, ?, ?)";
+
+		try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/convert", "nabeelaansari", "postgres");
+				 PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+			pstmt.setString(1, sourceCurrency);
+			pstmt.setString(2, targetCurrency);
+			pstmt.setDouble(3, sourceAmount);
+			pstmt.setDouble(4, convertedAmount);
+			pstmt.setDate(5, new java.sql.Date(System.currentTimeMillis()));
+
+			int affectedRows = pstmt.executeUpdate();
+			Statement statement =connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("SELECT * FROM conversion_history LIMIT 10");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

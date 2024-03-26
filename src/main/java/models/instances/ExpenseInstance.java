@@ -41,8 +41,11 @@ public class ExpenseInstance implements ExpenseTreeTableItem {
 	public final ObjectProperty<Expense> expense = new SimpleObjectProperty<>();
 	
 	public final ObjectProperty<TimePeriod> month = new SimpleObjectProperty<>();
-	
-	@Id
+
+
+
+
+    @Id
 	@GeneratedValue
 	public int getID() {
 		return ID.get();

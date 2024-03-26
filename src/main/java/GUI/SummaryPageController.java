@@ -27,11 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class SummaryPageController implements Initializable{
-	@FXML
-	public LineChart LineGraph;
+public class SummaryPageController implements Initializable {
+
+
 	@FXML
 	public PieChart PieChart;
+	@FXML
+	public LineChart<String, Number> LineGraph;
 
 	public XYChart.Series<String, Number> income;
 	public XYChart.Series<String, Number> expenses;
@@ -44,7 +46,7 @@ public class SummaryPageController implements Initializable{
 		setupData();
 	}
 
-	private void setupData(){
+	public void setupData() {
 		List<Category> categories;
 		List<TreeItem<ExpenseTreeTableItem>> items = new ArrayList<>();
 
@@ -56,14 +58,14 @@ public class SummaryPageController implements Initializable{
 //					s.refresh(timePeriod);
 		}
 
-		for (Category cat : categories){
+		for (Category cat : categories) {
 			String name = cat.name.getValue();
 			double categoryTotal = 0;
 
 			List<ExpenseInstance> expenseInstances = App.s().createNamedQuery("getExpenseInstancesForCategory", ExpenseInstance.class)
 				.setParameter("tp", timePeriod.ID.get()).setParameter("cat", cat.ID.get()).getResultList();
 
-			for (ExpenseInstance eI : expenseInstances){
+			for (ExpenseInstance eI : expenseInstances) {
 				categoryTotal += eI.cost.get();
 			}
 			addPointToLineChart(name, categoryTotal, "E");
@@ -86,7 +88,7 @@ public class SummaryPageController implements Initializable{
 	}
 
 	public void addPointToLineChart(String xValue, Number yValue, String type) {
-		if (type.equals("E")){
+		if (type.equals("E")) {
 			XYChart.Series<String, Number> expensesSeries = (XYChart.Series<String, Number>) LineGraph.getData().get(0);
 			expensesSeries.getData().add(new XYChart.Data<>(xValue, yValue));
 
@@ -98,7 +100,7 @@ public class SummaryPageController implements Initializable{
 			Tooltip.install(newDataPoint.getNode(), tooltip);
 
 			//expensesSeries.getNode().setStyle("-fx-stroke: red;");
-		}else {
+		} else {
 			XYChart.Series<String, Number> incomeSeries = (XYChart.Series<String, Number>) LineGraph.getData().get(0);
 			incomeSeries.getData().add(new XYChart.Data<>(xValue, yValue));
 
@@ -118,9 +120,9 @@ public class SummaryPageController implements Initializable{
 		pieChartData.add(data);
 //        PieChart.Data slice1 = new PieChart.Data(category, value);
 //
-		if (colour.equals("E")){
+		if (colour.equals("E")) {
 			data.getNode().setStyle("-fx-pie-color: #ff0000;"); // Red
-		}else {
+		} else {
 			data.getNode().setStyle("-fx-pie-color: #00ff00;"); // Green
 		}
 //
@@ -135,36 +137,46 @@ public class SummaryPageController implements Initializable{
 		// Adding Person 1
 		ArrayList<Object> added = new ArrayList<Object>();
 
-		added.add(1);added.add("JOHN");added.add("password");
+		added.add(1);
+		added.add("JOHN");
+		added.add("password");
 
 		ArrayList<Object> Expenses = new ArrayList<Object>();
-		Expenses.add(20.1);Expenses.add(40.0);Expenses.add(30.0);Expenses.add(10.0);added.add(Expenses);
+		Expenses.add(20.1);
+		Expenses.add(40.0);
+		Expenses.add(30.0);
+		Expenses.add(10.0);
+		added.add(Expenses);
 
 		ArrayList<Object> Incomes = new ArrayList<Object>();
-		Incomes.add(100.0);Incomes.add(120.0);added.add(Incomes);
+		Incomes.add(100.0);
+		Incomes.add(120.0);
+		added.add(Incomes);
 
 		ArrayList<Object> Investments = new ArrayList<Object>();
-		Investments.add(100.1);Investments.add(200.1);added.add(Investments);
+		Investments.add(100.1);
+		Investments.add(200.1);
+		added.add(Investments);
 
 //        d.addPerson(added);
 
-		addPointToLineChart("Jan", (double)Expenses.get(0), "E");
-		addPointToLineChart("Feb", (double)Expenses.get(1), "E");
-		addPointToLineChart("Mar", (double)Expenses.get(2), "E");
-		addPointToLineChart("Apr", (double)Expenses.get(3), "E");
+		addPointToLineChart("Jan", (double) Expenses.get(0), "E");
+		addPointToLineChart("Feb", (double) Expenses.get(1), "E");
+		addPointToLineChart("Mar", (double) Expenses.get(2), "E");
+		addPointToLineChart("Apr", (double) Expenses.get(3), "E");
 
-		addPointToLineChart("Jan", (double)Incomes.get(0), "I");
+		addPointToLineChart("Jan", (double) Incomes.get(0), "I");
 		addPointToLineChart("Feb", 0, "I");
-		addPointToLineChart("Mar", (double)Incomes.get(1), "I");
+		addPointToLineChart("Mar", (double) Incomes.get(1), "I");
 		addPointToLineChart("Apr", 0, "I");
 
-		addDataToPieChart("Total Expenses: " + (double)Expenses.get(0), (double)Expenses.get(0), "E");
-		addDataToPieChart("Total Income: " + (double)Incomes.get(0), (double)Incomes.get(0), "I");
+		addDataToPieChart("Total Expenses: " + (double) Expenses.get(0), (double) Expenses.get(0), "E");
+		addDataToPieChart("Total Income: " + (double) Incomes.get(0), (double) Incomes.get(0), "I");
 
 		runToolTip();
 	}
 
-	private void runToolTip(){
+	private void runToolTip() {
 		for (XYChart.Data<String, Number> data : expenses.getData()) {
 			Tooltip tooltip = new Tooltip("Month: " + data.getXValue() + ", Amount: " + data.getYValue());
 			Tooltip.install(data.getNode(), tooltip);
@@ -184,7 +196,7 @@ public class SummaryPageController implements Initializable{
 			ExpenseTableController controller = loader.getController();
 			controller.setFields(TimePeriod.generateNewMonth());
 			App.setCurrentScene(p);
-		} catch(IOException err) {
+		} catch (IOException err) {
 			System.err.println("Couldn't change scene: " + err.toString());
 			err.printStackTrace();
 			return;
@@ -205,4 +217,11 @@ public class SummaryPageController implements Initializable{
 		LineGraph.setLegendVisible(false);
 		PieChart.setLegendVisible(false);
 	}
+
+
 }
+
+
+
+
+
